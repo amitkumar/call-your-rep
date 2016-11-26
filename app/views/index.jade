@@ -1,0 +1,95 @@
+extends layout
+
+block content
+  h1= title
+  //- p Welcome to #{title}
+  //- h2 Login
+  //- a(href="/auth/facebook",class="btn btn-default") Facebook
+  
+  form(id="phone-login-form")
+    div(class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label")
+      input(class="mdl-textfield__input",type="phone",pattern="-?[0-9]*(\.[0-9]+)?",id="phone-number")
+      label(class="mdl-textfield__label",for="phone-number") Enter a U.S. phone number (e.g. 444-555-6666)...
+      span(class="mdl-textfield__error") This does not appear to be a valid phone number
+    br
+    button(type="submit",class="mdl-button mdl-js-button mdl-button--raised") Sign in using phone number
+  
+  form(id="email-login-form")
+    div(class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label")
+      input(class="mdl-textfield__input",type="email",id="email")
+      label(class="mdl-textfield__label",for="email") Enter an email address
+      span(class="mdl-textfield__error") This does not appear to be a valid email
+    br
+    button(type="submit",class="mdl-button mdl-js-button mdl-button--raised") Sign in using email
+
+  
+
+  //- script.
+  //-   window.fbAsyncInit = function() {
+  //-   FB.init({
+  //-     appId      : '207540456359128',
+  //-     xfbml      : true,
+  //-     version    : 'v2.8'
+  //-     });
+  //-   };
+
+  //-   (function(d, s, id){
+  //-   var js, fjs = d.getElementsByTagName(s)[0];
+  //-   if (d.getElementById(id)) {return;}
+  //-   js = d.createElement(s); js.id = id;
+  //-   js.src = "//connect.facebook.net/en_US/sdk.js";
+  //-   fjs.parentNode.insertBefore(js, fjs);
+  //-   }(document, 'script', 'facebook-jssdk'));
+
+  script(src="https://sdk.accountkit.com/en_US/sdk.js")
+
+  script.
+    // initialize Account Kit with CSRF protection
+    AccountKit_OnInteractive = function(){
+      AccountKit.init(
+        {
+          appId: '#{appId}', 
+          state:"#{csrf}", 
+          version:"v1.1"
+        }
+      );
+    };
+
+    // login callback
+    function loginCallback(response) {
+      console.log(response);
+      if (response.status === "PARTIALLY_AUTHENTICATED") {
+        
+        $.post('/accountkit-callback', {
+          code : response.code,
+          csrf_nonce : response.state
+        }).done(function(response) {
+          console.log('success', response);
+        });
+      }
+      else if (response.status === "NOT_AUTHENTICATED") {
+        // handle authentication failure
+      }
+      else if (response.status === "BAD_PARAMS") {
+        // handle bad parameters
+      }
+    }
+
+    $(function(){
+      $('#phone-login-form').on('submit', function(e){
+        e.preventDefault();
+        AccountKit.login('PHONE', 
+          {
+            countryCode: '+1', 
+            phoneNumber: $('#phone-number').val()
+          }, // will use default values if this is not specified
+          loginCallback);
+      });
+
+      $('#email-login-form').on('submit', function(e){
+        e.preventDefault();
+        AccountKit.login('EMAIL', {
+          emailAddress: document.getElementById("email").value
+        }, loginCallback);
+      });
+    });
