@@ -1,39 +1,85 @@
 
 
-var express = require('express'),
+const express = require('express'),
   config = require('./config/config'),
   glob = require('glob'),
   mongoose = require('mongoose'),
-  User = require('./app/models/user');
+  User = require('./app/models/user'),
+  Guid = require('guid');
 
 mongoose.connect(config.db);
-var db = mongoose.connection;
+const db = mongoose.connection;
 db.on('error', function () {
   throw new Error('unable to connect to database at ' + config.db);
 });
 
-var models = glob.sync(config.root + '/app/models/*.js');
+const models = glob.sync(config.root + '/app/models/*.js');
 models.forEach(function (model) {
   require(model);
 });
-var app = express();
+const app = express();
 
-// var passport = require('passport')
-//   , FacebookStrategy = require('passport-facebook').Strategy;
+const passport = require('passport')
+  // , FacebookStrategy = require('passport-facebook').Strategy
+  , AccountKitStrategy = require('./app/lib/passport-accountkit-strategy');
 
-// passport.serializeUser(function(user, done) {
-//   done(null, user.id);
-// });
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
 
-// passport.deserializeUser(function(id, done) {
-//   User.findById(id, function(err, user) {
-//     done(err, user);
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// used to serialize the user for the session
+passport.serializeUser(function(user, done) {
+    done(null, user.phone);
+});
+
+// used to deserialize the user
+passport.deserializeUser(function(phone, done) {
+    User.findOne({ phone : phone}, function(err, user) {
+        done(err, user);
+    });
+});
+
+
+
+// const csrf_guid = Guid.raw();
+// const api_version = config.facebook.accountKitVersion;
+// const app_id = config.facebook.appId;
+// const app_secret = config.facebook.appSecret;
+// const me_endpoint_base_url = 'https://graph.accountkit.com/' + config.facebook.accountKitVersion + '/me';
+// const token_exchange_base_url = 'https://graph.accountkit.com/' + config.facebook.accountKitVersion + '/access_token'; 
+
+// passport.use(new AccountKitStrategy({
+// 	appId: app_id,
+//     csrf: csrf_guid,
+//     version: api_version,
+//     appSecret: app_secret
+//   },
+//   function(accessToken, refreshToken, profile, cb) {
+//     User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+//       return cb(err, user);
+//     });
+//   }
+// ));
+// app.get('/auth/accountkit',
+//   passport.authenticate('accountkit'));
+
+// app.get('/auth/accountkit/callback',
+//   passport.authenticate('facebook', { failureRedirect: '/login' }),
+//   function(req, res) {
+//     // Successful authentication, redirect home.
+//     res.redirect('/');
 //   });
-// });
 
-
-// app.use(passport.initialize());
-// app.use(passport.session());
 // passport.use(new FacebookStrategy({
 //     clientID: config.facebook.appId,
 //     clientSecret: config.facebook.appSecret,
@@ -71,23 +117,6 @@ var app = express();
 //   passport.authenticate('facebook', { successRedirect: '/',
 //                                       failureRedirect: '/login' }));
 
-
-// app.get('/', function(req, res, next) {
-//   res.render('index', { title: 'Express' });
-// });
-
-// app.get('/login', function(req, res, next) {
-//   res.send('Go back and register!');
-// });
-
-// app.get('/auth/facebook', passport.authenticate('facebook', { scope: [ 'user:email' ] }));
-
-// app.get('/auth/facebook/callback',
-//   passport.authenticate('facebook', { failureRedirect: '/login' }),
-//   function(req, res) {
-//     // Successful authentication
-//     res.json(req.user);
-//   });
 
 
 module.exports = require('./config/express')(app, config);

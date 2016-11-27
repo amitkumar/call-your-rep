@@ -3,7 +3,9 @@ var express = require('express'),
   mongoose = require('mongoose'),
   User = mongoose.model('User'),
   Guid = require('guid'),
-  config = require('../../config/config');
+  config = require('../../config/config'),
+  Request = require('request'),
+  Querystring = require('querystring');
 
 var csrf_guid = Guid.raw();
 const api_version = config.facebook.accountKitVersion;
@@ -13,9 +15,10 @@ const me_endpoint_base_url = 'https://graph.accountkit.com/' + config.facebook.a
 const token_exchange_base_url = 'https://graph.accountkit.com/' + config.facebook.accountKitVersion + '/access_token'; 
 
 router.get('/login-successful', function (req, res, next) {
+    console.log('req.user', req.user);
     res.render('login-successful', {
       title : 'Login Successful',
-      facebook : config.facebook
+      user : req.user
     });
 });
 
@@ -25,8 +28,9 @@ router.get('/', function (req, res, next) {
     appId: app_id,
     csrf: csrf_guid,
     version: api_version,
+    user : req.user
   };
-    res.render('index', locals);
+  res.render('index', locals);
 
   // User.find(function (err, users) {
   //   if (err) return next(err);
@@ -37,7 +41,7 @@ router.get('/', function (req, res, next) {
   // });
 });
 
-router.post('/accountkit-callback', function(request, response){
+router.post('/auth/accountkit/callback', function(request, response){
   console.log('request.body', request.body);
 
   console.log('code: ' + request.body.code);
@@ -63,15 +67,33 @@ router.post('/accountkit-callback', function(request, response){
       // get account details at /me endpoint
       var me_endpoint_url = me_endpoint_base_url + '?access_token=' + respBody.access_token;
       Request.get({url: me_endpoint_url, json:true }, function(err, resp, respBody) {
+        console.log('accountkit respBody', respBody);
         // send login_success.html
         if (respBody.phone) {
-          locals.phone_num = respBody.phone.number;
-        } else if (respBody.email) {
-          locals.email_addr = respBody.email.address;
+          locals.phone = respBody.phone.number;
         }
+        //  else if (respBody.email) {
+        //   locals.email = respBody.email.address;
+        // }
         // var html = Mustache.to_html(loadLoginSuccess(), view);
         // response.send(html);
-        response.render('login-successful', locals);
+
+        User.findOneAndUpdate(
+          { phone : locals.phone }, 
+          { accountKitProfile :  respBody }, 
+          { 
+            new : true,
+            setDefaultsOnInsert : true,
+            upsert : true 
+          }, 
+          function(err, user) {
+            request.logIn(user,function(err) {
+              console.log('logged in user', user);
+              if (err) { return next(err); }
+              // return res.redirect('/users/' + req.user.username);
+              response.redirect('/login-successful');
+            });
+        });
       });
     });
   } 
@@ -81,6 +103,7 @@ router.post('/accountkit-callback', function(request, response){
     response.end("Something went wrong. :( ");
   }
 });
+
 module.exports = function (app) {
   app.use('/', router);
 };
