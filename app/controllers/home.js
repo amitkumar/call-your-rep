@@ -10,7 +10,6 @@ var express = require('express'),
 
 
 router.get('/profile', requireLoggedIn, function (req, res) {
-    console.log('req.user', req.user);
     res.render('profile', {
       title : 'Profile',
       user : req.user.toClientJSON(),
@@ -19,7 +18,6 @@ router.get('/profile', requireLoggedIn, function (req, res) {
 });
 
 router.post('/profile', requireLoggedIn, function (req, res) {
-    console.log('req.user', req.user);
     res.render('profile', {
       title : 'Profile',
       user : req.user.toClientJSON(),

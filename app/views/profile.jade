@@ -1,46 +1,60 @@
 extends layout
 
 block content
-  
-  form(id="profile-form",method="post",action="/profile")
-    input(type="hidden",name="_id",value="#{user._id}")
-    div(class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label")
-      input(class="mdl-textfield__input",type="text",id="name", value="#{user.name || ''}")
-      label(class="mdl-textfield__label",for="name") Your Name
-      span(class="mdl-textfield__error") This does not appear to be a valid name.
-    br
-    div(class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label")
-      input(class="mdl-textfield__input",type="phone",pattern="-?[0-9]*(\.[0-9]+)?",id="phone-number", value="#{user.phone || ''}")
-      label(class="mdl-textfield__label",for="phone-number") Your U.S. phone number (e.g. 444-555-6666)
-      span(class="mdl-textfield__error") This does not appear to be a valid phone number.
-    br
-    
-    div(class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label")
-      input(class="mdl-textfield__input",
-            type="text",
-            id="autocomplete",
-            name="address",
-            value="#{ (user.address && user.address.street ? user.address.friendlyDisplay : '') }",
-            onFocus="geolocate()")
-      label(class="mdl-textfield__label",for="address") Your address
-      span(class="mdl-textfield__error") This does not appear to be a valid address.
+  div.spacer
+    form(id="profile-form",method="post",action="/profile",class="card")
+        h2 Your Profile Data
+        input(type="hidden",name="_id",value="#{user._id}")
+        div(class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label")
+          input(class="mdl-textfield__input",type="text",id="name", value="#{user.name || ''}")
+          label(class="mdl-textfield__label",for="name") Your Name
+          span(class="mdl-textfield__error") This does not appear to be a valid name.
+        br
+        div(class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label")
+          input(class="mdl-textfield__input",type="phone",pattern="-?[0-9]*(\.[0-9]+)?",id="phone-number", value="#{user.phone || ''}")
+          label(class="mdl-textfield__label",for="phone-number") Your U.S. phone number (e.g. 444-555-6666)
+          span(class="mdl-textfield__error") This does not appear to be a valid phone number.
+        br
+        
+        div(class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label")
+          input(class="mdl-textfield__input",
+                type="text",
+                id="autocomplete",
+                name="address",
+                value="#{ (user.address && user.address.street ? user.address.friendlyDisplay : '') }",
+                onFocus="geolocate()")
+          label(class="mdl-textfield__label",for="address") Your address
+          span(class="mdl-textfield__error") This does not appear to be a valid address.
 
-    div.processed-address(style="display:none")
-      label() Formatted address
-      div.formatted-address
-        span(class="street-address") #{ (user.address && user.address.street ? user.address.street : '') }
-        | , 
-        span(class="locality") #{ (user.address && user.address.city ? user.address.city : '') }
-        | , 
-        span(class="region") #{ (user.address && user.address.state ? user.address.state : '') }
-        | , 
-        span(class="postal-code") #{ (user.address && user.address.zip ? user.address.zip : '') }
-        | , 
-        span(class="country-name") #{ (user.address && user.address.country ? user.address.country : '') }
+        div.processed-address(style="display:none")
+          label() Formatted address
+          div.formatted-address
+            span(class="street-address") #{ (user.address && user.address.street ? user.address.street : '') }
+            | , 
+            span(class="locality") #{ (user.address && user.address.city ? user.address.city : '') }
+            | , 
+            span(class="region") #{ (user.address && user.address.state ? user.address.state : '') }
+            | , 
+            span(class="postal-code") #{ (user.address && user.address.zip ? user.address.zip : '') }
+            | , 
+            span(class="country-name") #{ (user.address && user.address.country ? user.address.country : '') }
 
-    br
-    br
-    button(type="submit",class="mdl-button mdl-js-button mdl-button--raised") Save
+        br
+        br
+        button(type="submit",class="mdl-button mdl-js-button mdl-button--raised") Save
+
+      .card.congressperson(style="margin-top: 2em;")
+        h2 Your Congressional Representative
+        .congressperson-detail
+          .name 
+            h4 Name
+            p #{ (user.congressperson && user.congressperson['member-info'] ? user.congressperson['member-info']['official-name'] : '') }
+          .phone  
+            h4 Phone
+            - var phone = (user.congressperson && user.congressperson['member-info'] ? user.congressperson['member-info']['phone'] : '')
+            p 
+              a(href="tel:#{phone}") #{phone}
+          //- | #{ (user.congressperson ? JSON.stringify(user.congressperson) : '') }
 
   div#notification.mdl-js-snackbar.mdl-snackbar
     .mdl-snackbar__text
@@ -81,6 +95,18 @@ block content
       CYL.Profile.autocomplete.addListener('place_changed', fillInAddress);
     }
 
+    function getFormattedGoogleAddress(googlePlace){
+      var $addressNode = $('<div>').html(googlePlace.adr_address);
+
+      return {
+        street : $addressNode.find('.street-address').text(),
+        city : $addressNode.find('.locality').text(),
+        state : $addressNode.find('.region').text(),
+        zip : $addressNode.find('.postal-code').text(),
+        country : $addressNode.find('.country-name').text()
+      };
+    }
+
     function fillInAddress() {
       // Get the place details from the autocomplete object.
       var place = CYL.Profile.autocomplete.getPlace();
@@ -88,46 +114,72 @@ block content
       console.log(place);
       // <span class="street-address">160 S 3rd St</span>, <span class="locality">Brooklyn</span>, <span class="region">NY</span> <span class="postal-code">11211</span>, <span class="country-name">USA</span>"
       $('.formatted-address').html(place.adr_address);
+
+      
+      $.ajax({
+        url : '/api/get-congressperson',
+        data: {
+          address : getFormattedGoogleAddress(place)
+        },
+        dataType : 'json',
+        method : "GET",
+        success : function(response){
+          console.log('got response', response);
+          CYL.currentUser.congressperson = response;
+
+          $('.congressperson .name p').text(CYL.currentUser.congressperson['member-info']['official-name']);
+
+          var phone = CYL.currentUser.congressperson['member-info']['phone'];
+          $('.congressperson .phone p').html('<a href="tel:' + phone + '">' + phone + '</a>');
+
+          updateUser();
+        }
+      });
+    }
+
+    function updateUser(){
+      var data = {
+        phone : $('#phone-number').val(),
+        name : $('#name').val(),
+        address : {
+          street : $('.formatted-address .street-address').text(),
+          city : $('.formatted-address .locality').text(),
+          state : $('.formatted-address .region').text(),
+          zip : $('.formatted-address .postal-code').text(),
+          country : $('.formatted-address .country-name').text()
+        },
+        congressperson : CYL.currentUser.congressperson
+      };
+
+      var googleAddress = CYL.Profile.autocomplete.getPlace();
+      if (googleAddress){
+        data.googleAddress = googleAddress;
+      }
+
+      $.ajax({
+        url : '/api/v1/User/' + CYL.currentUser._id,
+        data: JSON.stringify(data),
+        contentType: 'application/json; charset=utf-8',
+        dataType : 'json',
+        method : "PATCH",
+        success : function(response){
+          var notificationContainer = document.querySelector('#notification');
+          var data = {
+            message: 'Saved.',
+            timeout: 2000
+            //- actionHandler: handler,
+            //- actionText: 'Undo'
+          };
+          notificationContainer.MaterialSnackbar.showSnackbar(data);    
+        }
+      });
     }
 
     $(function(){
       $('#profile-form').on('submit', function(e){
         console.log('submitting');
         e.preventDefault();
-        var data = {
-          phone : $('#phone-number').val(),
-          name : $('#name').val(),
-          address : {
-            street : $('.formatted-address .street-address').text(),
-            city : $('.formatted-address .locality').text(),
-            state : $('.formatted-address .region').text(),
-            zip : $('.formatted-address .postal-code').text(),
-            country : $('.formatted-address .country-name').text()
-          }
-        };
-
-        var googleAddress = CYL.Profile.autocomplete.getPlace();
-        if (googleAddress){
-          data.googleAddress = googleAddress;
-        }
-
-        $.ajax({
-          url : '/api/v1/User/' + CYL.currentUser._id,
-          data: JSON.stringify(data),
-          contentType: 'application/json; charset=utf-8',
-          dataType : 'json',
-          method : "PATCH",
-          success : function(response){
-            var notificationContainer = document.querySelector('#notification');
-            var data = {
-              message: 'Saved.',
-              timeout: 2000
-              //- actionHandler: handler,
-              //- actionText: 'Undo'
-            };
-            notificationContainer.MaterialSnackbar.showSnackbar(data);    
-          }
-        });
+        updateUser();
         return false;
       });
     });

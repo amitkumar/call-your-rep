@@ -19,12 +19,7 @@ models.forEach(function (model) {
 });
 const app = express();
 
-
-
 require('./config/express')(app, config);
-
-console.log(require('express').Router());
-
 
 app.listen(config.port, function () {
   console.log('Express server listening on port ' + config.port);
