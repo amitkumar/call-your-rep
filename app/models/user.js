@@ -14,12 +14,20 @@ var UserSchema = new Schema({
   	type : String,
   	index : true
   },
+  name : String,
   verified : Boolean,
   zipCode : String,
-
+  facebook : Object
 });
 
 UserSchema.plugin(timestamps);
 
-mongoose.model('User', UserSchema);
+UserSchema.method('toClientJSON', function() {
+  return {
+  	_id : this._id,
+  	name : this.name
+  };
+});
+
+module.exports = mongoose.model('User', UserSchema);
 

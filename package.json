@@ -26,6 +26,7 @@
     "morgan": "^1.6.1",
     "passport": "^0.3.2",
     "passport-accountkit": "^2.1.0",
+    "passport-facebook": "^2.1.1",
     "pug": "^2.0.0-beta6",
     "querystring": "^0.2.0",
     "request": "^2.79.0",

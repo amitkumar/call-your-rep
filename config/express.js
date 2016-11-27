@@ -47,6 +47,8 @@ module.exports = function(app, config) {
     saveUninitialized: true
   }));
 
+  require('./passport')(app, config);
+
   var controllers = glob.sync(config.root + '/app/controllers/*.js');
   controllers.forEach(function (controller) {
     require(controller)(app);
