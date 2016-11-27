@@ -45,6 +45,7 @@ var config = {
     port: process.env.PORT || 3000,
     url : 'https://callyourlawmakers.herokuapp.com/',
     db: 'mongodb://admin:jDKW!WPm6R$2@ds163377.mlab.com:63377/call-your-lawmakers',
+    googleMapsKey : 'AIzaSyCFzuCB3XMJbKxJmc_7_m6M49rwHbl2r8s',
     facebook : {
       appId      : '207540456359128',
       xfbml      : true,
