@@ -43,6 +43,7 @@ var config = {
       name: 'call-your-congressperson'
     },
     port: process.env.PORT || 3000,
+    url : 'https://callyourlawmakers.herokuapp.com/',
     db: 'mongodb://admin:jDKW!WPm6R$2@ds163377.mlab.com:63377/call-your-lawmakers',
     facebook : {
       appId      : '207540456359128',
