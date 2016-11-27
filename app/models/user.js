@@ -26,6 +26,7 @@ var UserSchema = new Schema({
   },
   googleAddress : Object,
   facebook : Object,
+  congressperson : Object,
   isAdmin : { type : Boolean, access : 'protected' }
 });
 
@@ -41,7 +42,9 @@ UserSchema.method('toClientJSON', function(stringify) {
   	name : this.name,
   	phone : this.phone,
   	address : this.address,
-  	facebook : this.facebook
+  	googleAddress : this.googleAddress,
+  	facebook : this.facebook,
+  	congressperson : this.congressperson
   };
   if (stringify){
   	return JSON.stringify(result);
