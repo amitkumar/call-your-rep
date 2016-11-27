@@ -3,7 +3,7 @@ const cheerio = require('cheerio');
 const _ = require('lodash');
 const fs = require('fs');
 const xml2js = require('xml2js');
-
+const removeDiacritics = require('diacritics').remove;
 
 fs.readFile('./data/MemberData.xml', 'utf8', function(err, data) {
     // $ = cheerio.load(data);
