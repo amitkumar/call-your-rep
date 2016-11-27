@@ -17,16 +17,24 @@ var UserSchema = new Schema({
   name : String,
   verified : Boolean,
   zipCode : String,
-  facebook : Object
+  facebook : Object,
+  isAdmin : { type : Boolean, access : 'protected' }
 });
 
 UserSchema.plugin(timestamps);
 
-UserSchema.method('toClientJSON', function() {
-  return {
+UserSchema.method('toClientJSON', function(stringify) {
+  const result = {
   	_id : this._id,
-  	name : this.name
+  	name : this.name,
+  	phone : this.phone,
+  	facebook : this.facebook
   };
+  if (stringify){
+  	return JSON.stringify(result);
+  } else {
+  	return result;
+  }
 });
 
 module.exports = mongoose.model('User', UserSchema);
