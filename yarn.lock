@@ -168,7 +168,7 @@ async-foreach@^0.1.3:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/async-foreach/-/async-foreach-0.1.3.tgz#36121f845c0578172de419a97dbeb1d16ec34542"
 
-async@2.1.2:
+async@2.1.2, async@~2.1.0:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/async/-/async-2.1.2.tgz#612a4ab45ef42a70cde806bad86ee6db047e8385"
   dependencies:
@@ -309,6 +309,10 @@ block-stream@*:
 bluebird@2.10.2:
   version "2.10.2"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-2.10.2.tgz#024a5517295308857f14f91f1106fc3b555f446b"
+
+bluebird@~3.4.0:
+  version "3.4.6"
+  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.4.6.tgz#01da8d821d87813d158967e743d5fe6c62cf8c0f"
 
 body-parser@^1.13.3:
   version "1.15.2"
@@ -920,6 +924,19 @@ expand-tilde@^1.2.1, expand-tilde@^1.2.2:
   resolved "https://registry.yarnpkg.com/expand-tilde/-/expand-tilde-1.2.2.tgz#0b81eba897e5a3d31d1c3d102f8f01441e559449"
   dependencies:
     os-homedir "^1.0.1"
+
+express-restify-mongoose@^4.1.3:
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/express-restify-mongoose/-/express-restify-mongoose-4.1.3.tgz#68ea3ecde1dc57123683efdf8b8e9237a984613b"
+  dependencies:
+    async "~2.1.0"
+    bluebird "~3.4.0"
+    is-coordinates "~1.0.0"
+    lodash "~4.16.0"
+    mongoose-detective "~0.1.0"
+    moredots "~0.1.0"
+    serialize-error "~2.0.0"
+    weedout "~0.1.0"
 
 express-session@^1.14.2:
   version "1.14.2"
@@ -1649,6 +1666,13 @@ is-builtin-module@^1.0.0:
   dependencies:
     builtin-modules "^1.0.0"
 
+is-coordinates@~1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/is-coordinates/-/is-coordinates-1.0.0.tgz#91b8d2ea2db4a832b409b18eade578d9b2b6430c"
+  dependencies:
+    lodash.isarray "^4.0.0"
+    lodash.isnumber "^3.0.3"
+
 is-dotfile@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/is-dotfile/-/is-dotfile-1.0.2.tgz#2c132383f39199f8edc268ca01b9b007d205cc4d"
@@ -2097,11 +2121,19 @@ lodash.isarray@^3.0.0:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/lodash.isarray/-/lodash.isarray-3.0.4.tgz#79e4eb88c36a8122af86f844aa9bcd851b5fbb55"
 
+lodash.isarray@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/lodash.isarray/-/lodash.isarray-4.0.0.tgz#2aca496b28c4ca6d726715313590c02e6ea34403"
+
 lodash.isempty@^4.2.1:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/lodash.isempty/-/lodash.isempty-4.4.0.tgz#6f86cbedd8be4ec987be9aaf33c9684db1b31e7e"
 
-lodash.isplainobject@^4.0.4:
+lodash.isnumber@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/lodash.isnumber/-/lodash.isnumber-3.0.3.tgz#3ce76810c5928d03352301ac287317f11c0b1ffc"
+
+lodash.isplainobject@^4.0.4, lodash.isplainobject@~4.0.0:
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/lodash.isplainobject/-/lodash.isplainobject-4.0.6.tgz#7c526a52d89b45c45cc690b88163be0497f550cb"
 
@@ -2158,7 +2190,7 @@ lodash@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-1.0.2.tgz#8f57560c83b59fc270bd3d561b690043430e2551"
 
-lodash@~4.16.4:
+lodash@~4.16.0, lodash@~4.16.4:
   version "4.16.6"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.16.6.tgz#d22c9ac660288f3843e16ba7d2b5d06cca27d777"
 
@@ -2359,6 +2391,10 @@ mongodb@2.2.11, mongodb@~2.2.0:
     mongodb-core "2.0.13"
     readable-stream "2.1.5"
 
+mongoose-detective@~0.1.0:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/mongoose-detective/-/mongoose-detective-0.1.1.tgz#853b05e2fc100c1cfae6d52171f62626de681fce"
+
 mongoose-timestamp@^0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/mongoose-timestamp/-/mongoose-timestamp-0.6.0.tgz#da54110ca8e6d4c2b9957a0366836c362ed272be"
@@ -2381,6 +2417,12 @@ mongoose@^4.1.2:
     muri "1.1.1"
     regexp-clone "0.0.1"
     sliced "1.0.1"
+
+moredots@~0.1.0:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/moredots/-/moredots-0.1.1.tgz#132713eec40a0cd8c73669757761b1495cfa26df"
+  dependencies:
+    lodash.isplainobject "~4.0.0"
 
 morgan@^1.6.1:
   version "1.7.0"
@@ -3302,6 +3344,10 @@ sequencify@~0.0.7:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/sequencify/-/sequencify-0.0.7.tgz#90cff19d02e07027fd767f5ead3e7b95d1e7380c"
 
+serialize-error@~2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/serialize-error/-/serialize-error-2.0.0.tgz#6c1153f7ee3fe7f73ff1b1b7d2b494b67b675eba"
+
 serve-favicon@^2.3.0:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/serve-favicon/-/serve-favicon-2.3.2.tgz#dd419e268de012ab72b319d337f2105013f9381f"
@@ -3830,6 +3876,10 @@ websocket-driver@>=0.3.6:
 websocket-extensions@>=0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.1.tgz#76899499c184b6ef754377c2dbb0cd6cb55d29e7"
+
+weedout@~0.1.0:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/weedout/-/weedout-0.1.3.tgz#cbf2a842c3e65abf7858480de21668d8cf87d300"
 
 which-module@^1.0.0:
   version "1.0.0"

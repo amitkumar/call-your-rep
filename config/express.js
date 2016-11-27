@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 const compress = require('compression');
 const methodOverride = require('method-override');
 
+const restify = require('express-restify-mongoose');
+
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
  
@@ -49,6 +51,8 @@ module.exports = function(app, config) {
 
   require('./passport')(app, config);
 
+  
+
   var controllers = glob.sync(config.root + '/app/controllers/*.js');
   controllers.forEach(function (controller) {
     require(controller)(app);
@@ -62,6 +66,7 @@ module.exports = function(app, config) {
   
   if(app.get('env') === 'development'){
     app.use(function (err, req, res, next) {
+      console.log(err.status, err);
       res.status(err.status || 500);
       res.render('error', {
         message: err.message,

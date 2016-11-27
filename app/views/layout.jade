@@ -8,10 +8,13 @@ html(lang='en')
     link(rel="stylesheet",href="https://fonts.googleapis.com/icon?family=Material+Icons")
     link(rel="stylesheet",href="https://code.getmdl.io/1.2.1/material.indigo-pink.min.css")
     script(defer,src="https://code.getmdl.io/1.2.1/material.min.js")
-    script( src="https://code.jquery.com/jquery-3.1.1.min.js"
-            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    script( src="https://code.jquery.com/jquery-2.2.4.min.js"
+            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
             crossorigin="anonymous")
-    script(src="https://maps.googleapis.com/maps/api/js?key=#{googleMapsKey}&libraries=places&callback=initAutocomplete",async,defer)
+
+    script.
+      window.CYL = {}
+      CYL.currentUser = !{JSON.stringify(user)};
 
     block css
       link(rel='stylesheet', href='/css/style.css')

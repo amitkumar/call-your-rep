@@ -1,5 +1,79 @@
 extends layout
 
 block content
-  p= user
   
+  form(id="profile-form",method="post",action="/profile")
+    input(type="hidden",name="_id",value="#{user._id}")
+    div(class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label")
+      input(class="mdl-textfield__input",type="text",id="name", value="#{user.name || ''}")
+      label(class="mdl-textfield__label",for="name") Your Name
+      span(class="mdl-textfield__error") This does not appear to be a valid name.
+    br
+    div(class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label")
+      input(class="mdl-textfield__input",type="phone",pattern="-?[0-9]*(\.[0-9]+)?",id="phone-number", value="#{user.phone || ''}")
+      label(class="mdl-textfield__label",for="phone-number") Your U.S. phone number (e.g. 444-555-6666)
+      span(class="mdl-textfield__error") This does not appear to be a valid phone number.
+    br
+    br
+    button(type="submit",class="mdl-button mdl-js-button mdl-button--raised") Save
+
+  div#notification.mdl-js-snackbar.mdl-snackbar
+    .mdl-snackbar__text
+    button.mdl-snackbar__action(type='button')
+
+
+  
+
+  script.
+    function initAutocomplete(){
+
+    }
+
+    $(function(){
+      //- var notificationContainer = document.querySelector('#notification');
+      //- var data = {
+      //-   message: 'Saved.',
+      //-   timeout: 2000,
+      //-   //- actionHandler: handler,
+      //-   //- actionText: 'Undo'
+      //- };
+      //- notificationContainer.MaterialSnackbar.showSnackbar(data);
+
+      $('#profile-form').on('submit', function(e){
+        console.log('submitting');
+        e.preventDefault();
+            //- var notificationContainer = document.querySelector('#notification');
+            //- var data = {
+            //-   message: 'Saved.',
+            //-   timeout: 2000,
+            //-   //- actionHandler: handler,
+            //-   //- actionText: 'Undo'
+            //- };
+            //- notificationContainer.MaterialSnackbar.showSnackbar(data);    
+        var data = {
+          phone : $('#phone-number').val(),
+          name : $('#name').val()
+        };
+
+        $.ajax({
+          url : '/api/v1/User/' + CYL.currentUser._id,
+          data: JSON.stringify(data),
+          contentType: 'application/json; charset=utf-8',
+          dataType : 'json',
+          method : "PATCH",
+          success : function(response){
+            var notificationContainer = document.querySelector('#notification');
+            var data = {
+              message: 'Saved.',
+              timeout: 2000
+              //- actionHandler: handler,
+              //- actionText: 'Undo'
+            };
+            notificationContainer.MaterialSnackbar.showSnackbar(data);    
+          }
+        });
+        return false;
+      });
+    });
+
+  script(src="https://maps.googleapis.com/maps/api/js?key=#{googleMapsKey}&libraries=places&callback=initAutocomplete",async,defer)

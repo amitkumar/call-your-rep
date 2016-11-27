@@ -23,7 +23,7 @@ const app = express();
 
 require('./config/express')(app, config);
 
-
+console.log(require('express').Router());
 
 
 app.listen(config.port, function () {
