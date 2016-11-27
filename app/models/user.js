@@ -17,8 +17,20 @@ var UserSchema = new Schema({
   name : String,
   verified : Boolean,
   zipCode : String,
+  address : {
+  	street : String,
+  	city : String,
+  	state : String,
+  	zip : String,
+  	country : String
+  },
+  googleAddress : Object,
   facebook : Object,
   isAdmin : { type : Boolean, access : 'protected' }
+});
+
+UserSchema.virtual('address.friendlyDisplay').get(function(){
+	return this.address.street + ', ' + this.address.city + ', ' + this.address.state + ' ' + this.address.zip;
 });
 
 UserSchema.plugin(timestamps);
@@ -28,6 +40,7 @@ UserSchema.method('toClientJSON', function(stringify) {
   	_id : this._id,
   	name : this.name,
   	phone : this.phone,
+  	address : this.address,
   	facebook : this.facebook
   };
   if (stringify){
