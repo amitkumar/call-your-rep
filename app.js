@@ -1,6 +1,7 @@
 
 
 const express = require('express'),
+  dotenv = require('dotenv').config(),
   config = require('./config/config'),
   glob = require('glob'),
   mongoose = require('mongoose'),
