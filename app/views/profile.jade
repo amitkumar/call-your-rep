@@ -14,6 +14,31 @@ block content
       label(class="mdl-textfield__label",for="phone-number") Your U.S. phone number (e.g. 444-555-6666)
       span(class="mdl-textfield__error") This does not appear to be a valid phone number.
     br
+    
+    div(class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label")
+      input(class="mdl-textfield__input",
+            type="text",
+            id="autocomplete",
+            name="address",
+            value="#{ (user.address && user.address.street ? user.address.friendlyDisplay : '') }",
+            onFocus="geolocate()")
+      label(class="mdl-textfield__label",for="address") Your address
+      span(class="mdl-textfield__error") This does not appear to be a valid address.
+
+    div.processed-address(style="display:none")
+      label() Formatted address
+      div.formatted-address
+        span(class="street-address") #{ (user.address && user.address.street ? user.address.street : '') }
+        | , 
+        span(class="locality") #{ (user.address && user.address.city ? user.address.city : '') }
+        | , 
+        span(class="region") #{ (user.address && user.address.state ? user.address.state : '') }
+        | , 
+        span(class="postal-code") #{ (user.address && user.address.zip ? user.address.zip : '') }
+        | , 
+        span(class="country-name") #{ (user.address && user.address.country ? user.address.country : '') }
+
+    br
     br
     button(type="submit",class="mdl-button mdl-js-button mdl-button--raised") Save
 
@@ -25,35 +50,66 @@ block content
   
 
   script.
-    function initAutocomplete(){
+    CYL.Profile = {};
 
+    // Bias the autocomplete object to the user's geographical location,
+    // as supplied by the browser's 'navigator.geolocation' object.
+    function geolocate() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          var geolocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          var circle = new google.maps.Circle({
+            center: geolocation,
+            radius: position.coords.accuracy
+          });
+          CYL.Profile.autocomplete.setBounds(circle.getBounds());
+        });
+      }
+    }
+    function initAutocomplete(){
+      // Create the autocomplete object, restricting the search to geographical
+      // location types.
+      CYL.Profile.autocomplete = new google.maps.places.Autocomplete(
+            (document.getElementById('autocomplete')),
+            {types: ['geocode']});
+
+      // When the user selects an address from the dropdown, populate the address
+      // fields in the form.
+      CYL.Profile.autocomplete.addListener('place_changed', fillInAddress);
+    }
+
+    function fillInAddress() {
+      // Get the place details from the autocomplete object.
+      var place = CYL.Profile.autocomplete.getPlace();
+
+      console.log(place);
+      // <span class="street-address">160 S 3rd St</span>, <span class="locality">Brooklyn</span>, <span class="region">NY</span> <span class="postal-code">11211</span>, <span class="country-name">USA</span>"
+      $('.formatted-address').html(place.adr_address);
     }
 
     $(function(){
-      //- var notificationContainer = document.querySelector('#notification');
-      //- var data = {
-      //-   message: 'Saved.',
-      //-   timeout: 2000,
-      //-   //- actionHandler: handler,
-      //-   //- actionText: 'Undo'
-      //- };
-      //- notificationContainer.MaterialSnackbar.showSnackbar(data);
-
       $('#profile-form').on('submit', function(e){
         console.log('submitting');
         e.preventDefault();
-            //- var notificationContainer = document.querySelector('#notification');
-            //- var data = {
-            //-   message: 'Saved.',
-            //-   timeout: 2000,
-            //-   //- actionHandler: handler,
-            //-   //- actionText: 'Undo'
-            //- };
-            //- notificationContainer.MaterialSnackbar.showSnackbar(data);    
         var data = {
           phone : $('#phone-number').val(),
-          name : $('#name').val()
+          name : $('#name').val(),
+          address : {
+            street : $('.formatted-address .street-address').text(),
+            city : $('.formatted-address .locality').text(),
+            state : $('.formatted-address .region').text(),
+            zip : $('.formatted-address .postal-code').text(),
+            country : $('.formatted-address .country-name').text()
+          }
         };
+
+        var googleAddress = CYL.Profile.autocomplete.getPlace();
+        if (googleAddress){
+          data.googleAddress = googleAddress;
+        }
 
         $.ajax({
           url : '/api/v1/User/' + CYL.currentUser._id,

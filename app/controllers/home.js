@@ -1,25 +1,15 @@
-
-
-module.exports = function (app) {
-  var express = require('express'),
+var express = require('express'),
   router = express.Router(),
   mongoose = require('mongoose'),
   Guid = require('guid'),
   config = require('../../config/config'),
   Request = require('request'),
   Querystring = require('querystring'),
-  passport = require('passport');
+  passport = require('passport'),
+  requireLoggedIn = require('../lib/route-utils').requireLoggedIn;
 
-// route middleware to make sure a user is logged in
-function requireLoggedIn(req, res, next) {
-    // if user is authenticated in the session, carry on
-    if (req.isAuthenticated()) 
-        return next();
-    // if they aren't redirect them to the home page
-    res.redirect('/');
-}
 
-app.get('/profile', requireLoggedIn, function (req, res) {
+router.get('/profile', requireLoggedIn, function (req, res) {
     console.log('req.user', req.user);
     res.render('profile', {
       title : 'Profile',
@@ -28,9 +18,7 @@ app.get('/profile', requireLoggedIn, function (req, res) {
     });
 });
 
-
-
-app.post('/profile', requireLoggedIn, function (req, res) {
+router.post('/profile', requireLoggedIn, function (req, res) {
     console.log('req.user', req.user);
     res.render('profile', {
       title : 'Profile',
@@ -39,7 +27,7 @@ app.post('/profile', requireLoggedIn, function (req, res) {
     });
 });
 
-app.get('/', function (req, res) {
+router.get('/', function (req, res) {
   var locals = {
     title : 'Home',
     user : req.user ? req.user.toClientJSON() : '{}',
@@ -47,4 +35,5 @@ app.get('/', function (req, res) {
   };
   res.render('index', locals);
 });
-};
+
+module.exports = router;

@@ -52,11 +52,26 @@ module.exports = function(app, config) {
   require('./passport')(app, config);
 
   
-
-  var controllers = glob.sync(config.root + '/app/controllers/*.js');
-  controllers.forEach(function (controller) {
-    require(controller)(app);
+  var userUri = restify.serve(app, require('../app/models/user'), {
+    private: ['isAdmin'],
+    preMiddleware: function (req, res, next) {
+      console.log('preMiddleware', req.user, req.params);
+      if ( (!req.user.isAdmin) && (req.user._id.toString() !== req.params.id)){
+        console.log('req user is not admin and doesnt match requested user', req.user._id.toString(), req.params.id);
+        return next(new Error('Unauthorized'));
+      } else {
+        return next();
+      }
+    }
   });
+
+  // var controllers = glob.sync(config.root + '/app/controllers/*.js');
+  // controllers.forEach(function (controller) {
+  //   require(controller)(app);
+  // });
+
+  app.use('/', require('../app/controllers/home'));  
+  app.use('/api', require('../app/controllers/api'));
 
   app.use(function (req, res, next) {
     var err = new Error('Not Found');
