@@ -8,7 +8,7 @@ var facebook = {
     appId      : '208473356265838',
     xfbml      : true,
     version    : 'v2.6',
-    appSecret : 'ff44dd2674ccda301de28f8a75e82e51',
+    appSecret : 'a56d46e5cf5c1721c8efb98522454463',
     appToken : '2189434359d46518b30c4d1a1b53ec49',
     accountKitVersion : 'v1.1'
   }
@@ -21,8 +21,10 @@ var config = {
       name: 'call-your-congressperson'
     },
     port: process.env.PORT || 3000,
+    url : 'http://localhost:3000',
     db: 'mongodb://admin:jDKW!WPm6R$2@ds163377.mlab.com:63377/call-your-lawmakers',
-    facebook : facebook['call-your-lawmakers-test1']
+    facebook : facebook['call-your-lawmakers-test1'],
+    googleMapsKey : 'AIzaSyCFzuCB3XMJbKxJmc_7_m6M49rwHbl2r8s'
   },
 
   test: {
