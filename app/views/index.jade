@@ -5,7 +5,8 @@ block content
   //- p Welcome to #{title}
   //- h2 Login
   //- a(href="/auth/facebook",class="btn btn-default") Facebook
-  
+  p= user
+
   form(id="phone-login-form")
     div(class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label")
       input(class="mdl-textfield__input",type="phone",pattern="-?[0-9]*(\.[0-9]+)?",id="phone-number")
@@ -60,7 +61,7 @@ block content
       console.log(response);
       if (response.status === "PARTIALLY_AUTHENTICATED") {
         
-        $.post('/accountkit-callback', {
+        $.post('/auth/accountkit/callback', {
           code : response.code,
           csrf_nonce : response.state
         }).done(function(response) {
