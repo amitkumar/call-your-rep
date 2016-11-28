@@ -22,6 +22,8 @@ const app = express();
 
 require('./config/express')(app, config);
 
+require('./config/twilio').test();
+
 app.listen(config.port, function () {
   console.log('Express server listening on port ' + config.port);
 });
