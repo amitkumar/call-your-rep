@@ -113,10 +113,10 @@ fs.readFile('./data/MemberData.xml', 'utf8', function(err, data) {
 	    	membersKeyedByOfficialName[officialName] = normalizedMember;
 	    });
 	    
-	    console.log('membersKeyedByOfficialName loaded');
-	    Object.keys(membersKeyedByOfficialName).forEach(function(key){
-	    	console.log(key);
-	    })
+	    // console.log('membersKeyedByOfficialName loaded');
+	    // Object.keys(membersKeyedByOfficialName).forEach(function(key){
+	    // 	console.log(key);
+	    // })
 	});
 })
 

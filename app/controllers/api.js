@@ -11,7 +11,7 @@ const express = require('express'),
  * req.params.address : address object, formatted as used in User model
  */
 router.get('/get-congressperson', requireLoggedIn, function (req, res) {
-	console.log('/get-congressperson query', req.query);
+	// console.log('/get-congressperson query', req.query);
 	
 	findYourRepresentative(req.query.address, function(err, representative){
 		res.send(representative);
